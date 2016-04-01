@@ -32,3 +32,6 @@ cursor.execute(sql) # Create pantheon table
 #   colaboration    current colaboration points
 #   memberType      current member type [academy|pantheon]
 #   
+table = LoginCredentials['mysql_log']
+sql = "CREATE TABLE " + table + "( epoch int, status tinyint )"
+cursor.execute(sql) # Create run logs table

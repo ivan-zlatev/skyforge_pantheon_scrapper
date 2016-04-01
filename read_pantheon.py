@@ -13,6 +13,14 @@ import MySQLdb
 from private_data import LoginCredentials # import credentials
 
 def LogInToMyPortal(username, password, pantheonID):
+	global status
+	status = False
+	db = MySQLdb.connect(host=LoginCredentials['mysql_host'],
+						user=LoginCredentials['mysql_username'],
+						passwd=LoginCredentials['mysql_password'],
+						db=LoginCredentials['mysql_db'])
+	cursor = db.cursor()
+	log = LoginCredentials['mysql_log']
 	browser = webdriver.Firefox() # open a webdriver
 	browser.set_window_size(1920, 1080) # set windows size so that buttons are visible
 	browser.get("https://account.my.com/login/") # login to aelinet
@@ -23,8 +31,10 @@ def LogInToMyPortal(username, password, pantheonID):
 	p.submit()
 #get first members page
 	browser.get("https://eu.portal.sf.my.com/guild/members/" + pantheonID)
-	time.sleep(2)
+	time.sleep(1)
 	epoch = int(time.time())
+	sql = "INSERT INTO " + log + " ( epoch, status ) VALUES ( %d, 0 )" % ( epoch )
+	cursor.execute(sql)
 	global memberType
 	memberType = "pantheon"
 	getPantheonData(browser.page_source, epoch)
@@ -33,13 +43,13 @@ def LogInToMyPortal(username, password, pantheonID):
 		try:
 			browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 			browser.find_element_by_class_name("svg-arrow-right").click()
-			time.sleep(2)
+			time.sleep(1)
 			getPantheonData(browser.page_source, epoch)
 		except:
 			break
 #get first academy page
 	browser.get("https://eu.portal.sf.my.com/guild/academy/" + pantheonID)
-	time.sleep(2)
+	time.sleep(1)
 	memberType = "academy"
 	getPantheonData(browser.page_source, epoch)
 #get next academy page loop
@@ -47,11 +57,14 @@ def LogInToMyPortal(username, password, pantheonID):
 		try:
 			browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 			browser.find_element_by_class_name("svg-arrow-right").click()
-			time.sleep(2)
+			time.sleep(1)
 			getPantheonData(browser.page_source, epoch)
 		except:
 			browser.close()
 			break
+	if status == True:
+		sql = "UPDATE " + log + " SET status=1 WHERE epoch=%d" % (epoch)
+		cursor.execute(sql)
 
 def getPantheonData(page, epoch):
 	tree = html.fromstring(page)
@@ -69,7 +82,12 @@ def getPantheonData(page, epoch):
 											for tmp6 in tmp5.getchildren():
 												if 'guild-member' in tmp6.values():
 													member = tmp6
-													getMemberData(member, epoch)
+													global status
+													try:
+														getMemberData(member, epoch)
+														status = True
+													except:
+														status = False
 
 def getMemberData(member, epoch):
 	db = MySQLdb.connect(host=LoginCredentials['mysql_host'],
