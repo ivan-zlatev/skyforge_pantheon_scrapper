@@ -1,5 +1,11 @@
 #!/usr/bin/python
 
+#####################################################################
+#                                                                   #
+#  used to store the confidential information used by the scripts   #
+#                                                                   #
+#####################################################################
+
 LoginCredentials = {
 	'username' : "<user email address>",
 	'password' : "<user password>",

@@ -1,16 +1,34 @@
 #!/usr/bin/python
-import MySQLdb
-from private_data import LoginCredentials
 
-db = MySQLdb.connect(host=LoginCredentials['mysql_host'],    # your host, usually localhost
-				user=LoginCredentials['mysql_username'],         # your username
-				passwd=LoginCredentials['mysql_password'],  # your password
-				)
+###########################################################
+#                                                         #
+#  used to create the mysql database and pantheon table   #
+#                                                         #
+###########################################################
+
+import MySQLdb
+from private_data import LoginCredentials # import credentials
+
+db = MySQLdb.connect(host=LoginCredentials['mysql_host'],
+				user=LoginCredentials['mysql_username'],
+				passwd=LoginCredentials['mysql_password'],
+				) # connect to the MySQL Server
 cursor = db.cursor()
-sql = "CREATE DATABASE " + LoginCredentials['mysql_db']
+sql = "CREATE DATABASE " + LoginCredentials['mysql_db'] # Create a new database
 cursor.execute(sql)
-db.select_db(LoginCredentials['mysql_db'])
+db.select_db(LoginCredentials['mysql_db']) # USE that database
 cursor = db.cursor()
 table = LoginCredentials['mysql_table']
 sql = "CREATE TABLE " + table + "( epoch int, member_id varchar(255), name varchar(255), prestige int, credits int, resources int, colaboration int, memberType varchar(255))"
-cursor.execute(sql)
+cursor.execute(sql) # Create pantheon table
+#  The columns are as follows:
+#   
+#   epoch           epoch time when the data was collected
+#   member_id       uniqu member ID
+#   name            curren player name
+#   prestige        current prestige
+#   credits         current credits
+#   resources       current resources
+#   colaboration    current colaboration points
+#   memberType      current member type [academy|pantheon]
+#   

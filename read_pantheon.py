@@ -1,18 +1,21 @@
 #!/usr/bin/python
-from lxml import html
-import requests
-import sys
-import argparse
+
+#####################################################################
+#                                                                   #
+#  used to scrap the data from aelinet and put it in a mysql db     #
+#                                                                   #
+#####################################################################
+
+from lxml import html # used for parsing html code
 import time
 from selenium import webdriver
 import MySQLdb
-from private_data import LoginCredentials
+from private_data import LoginCredentials # import credentials
 
 def LogInToMyPortal(username, password, pantheonID):
-	browser = webdriver.Firefox()
-	#browser.maximize_window()
-	browser.set_window_size(1920, 1080)
-	browser.get("https://account.my.com/login/")
+	browser = webdriver.Firefox() # open a webdriver
+	browser.set_window_size(1920, 1080) # set windows size so that buttons are visible
+	browser.get("https://account.my.com/login/") # login to aelinet
 	u = browser.find_element_by_name("email")
 	p = browser.find_element_by_name("password")
 	u.send_keys(username)
@@ -20,37 +23,37 @@ def LogInToMyPortal(username, password, pantheonID):
 	p.submit()
 #get first members page
 	browser.get("https://eu.portal.sf.my.com/guild/members/" + pantheonID)
-	time.sleep(1)
+	time.sleep(2)
 	epoch = int(time.time())
 	global memberType
 	memberType = "pantheon"
-	GetPantheonData(browser.page_source, epoch)
+	getPantheonData(browser.page_source, epoch)
 #get next members page loop
 	while True:
 		try:
 			browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 			browser.find_element_by_class_name("svg-arrow-right").click()
-			time.sleep(1)
-			GetPantheonData(browser.page_source, epoch)
+			time.sleep(2)
+			getPantheonData(browser.page_source, epoch)
 		except:
 			break
 #get first academy page
 	browser.get("https://eu.portal.sf.my.com/guild/academy/" + pantheonID)
-	time.sleep(1)
+	time.sleep(2)
 	memberType = "academy"
-	GetPantheonData(browser.page_source, epoch)
+	getPantheonData(browser.page_source, epoch)
 #get next academy page loop
 	while True:
 		try:
 			browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 			browser.find_element_by_class_name("svg-arrow-right").click()
-			time.sleep(1)
-			GetPantheonData(browser.page_source, epoch)
+			time.sleep(2)
+			getPantheonData(browser.page_source, epoch)
 		except:
 			browser.close()
 			break
 
-def GetPantheonData(page, epoch):
+def getPantheonData(page, epoch):
 	tree = html.fromstring(page)
 	body = tree.getchildren()[1]
 	for tmp in body.getchildren():
@@ -69,10 +72,10 @@ def GetPantheonData(page, epoch):
 													getMemberData(member, epoch)
 
 def getMemberData(member, epoch):
-	db = MySQLdb.connect(host=LoginCredentials['mysql_host'],    # your host, usually localhost
-					user=LoginCredentials['mysql_username'],         # your username
-					passwd=LoginCredentials['mysql_password'],  # your password
-					db=LoginCredentials['mysql_db'])        # name of the data base
+	db = MySQLdb.connect(host=LoginCredentials['mysql_host'],
+					user=LoginCredentials['mysql_username'],
+					passwd=LoginCredentials['mysql_password'],
+					db=LoginCredentials['mysql_db'])
 	cursor = db.cursor()
 	table = LoginCredentials['mysql_table']
 	for tmp in member.getchildren():
@@ -107,7 +110,7 @@ def getMemberData(member, epoch):
 			sql = "INSERT INTO " + table + " (epoch, member_id, name, prestige, credits, resources, colaboration, memberType) VALUES ( %d, '%s', '%s', %d, %d, %d, %d, '%s' )" % ( epoch, profile, name, prestige, credits, construction, colaboration, memberType )
 			cursor.execute(sql)
 
-def convertPantheonData(value):
+def convertPantheonData(value): # convert K and M from aelinet to zeros so that values are integer/long
 	if value[-1:] == "K":
 		value = value.split("K")[0]
 		value = value.replace(".", "")

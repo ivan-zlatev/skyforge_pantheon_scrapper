@@ -1,10 +1,17 @@
 #!/usr/bin/python
-import MySQLdb
-from private_data import LoginCredentials
 
-db = MySQLdb.connect(host=LoginCredentials['mysql_host'],    # your host, usually localhost
-				user=LoginCredentials['mysql_username'],         # your username
-				passwd=LoginCredentials['mysql_password'],  # your password
+#####################################################################
+#                                                                   #
+#  used to drop the whole database in terminal for testing purposes #
+#                                                                   #
+#####################################################################
+
+import MySQLdb
+from private_data import LoginCredentials # import credentials
+
+db = MySQLdb.connect(host=LoginCredentials['mysql_host'],
+				user=LoginCredentials['mysql_username'],
+				passwd=LoginCredentials['mysql_password'],
 				db=LoginCredentials['mysql_db'])
 cursor = db.cursor()
 cursor.execute("SELECT * FROM " + LoginCredentials['mysql_table'])
