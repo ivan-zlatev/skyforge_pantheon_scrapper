@@ -18,16 +18,37 @@ def LogInToMyPortal(username, password, pantheonID):
 	u.send_keys(username)
 	p.send_keys(password)
 	p.submit()
+#get first members page
 	browser.get("https://eu.portal.sf.my.com/guild/members/" + pantheonID)
 	time.sleep(1)
 	epoch = int(time.time())
+	global memberType
+	memberType = "pantheon"
 	GetPantheonData(browser.page_source, epoch)
-#get next page
-	browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-	browser.find_element_by_id("eventlink_0").click()
+#get next members page loop
+	while True:
+		try:
+			browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+			browser.find_element_by_class_name("svg-arrow-right").click()
+			time.sleep(1)
+			GetPantheonData(browser.page_source, epoch)
+		except:
+			break
+#get first academy page
+	browser.get("https://eu.portal.sf.my.com/guild/academy/" + pantheonID)
 	time.sleep(1)
+	memberType = "academy"
 	GetPantheonData(browser.page_source, epoch)
-	browser.close()
+#get next academy page loop
+	while True:
+		try:
+			browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+			browser.find_element_by_class_name("svg-arrow-right").click()
+			time.sleep(1)
+			GetPantheonData(browser.page_source, epoch)
+		except:
+			browser.close()
+			break
 
 def GetPantheonData(page, epoch):
 	tree = html.fromstring(page)
@@ -59,12 +80,13 @@ def getMemberData(member, epoch):
 			profile = tmp.getchildren()[1].values()
 			for tmp2 in profile:
 				if "zoneHelper" in tmp2.split("."):
-					profile = tmp2.split("members:selectmember/")[1].split("?")[0]
+					profile = tmp2.split(":selectmember/")[1].split("?")[0]
 			i = 1
 			#print profile
 			for tmp2 in tmp.getchildren()[0]:
 				if 'guild-member-td-b' in tmp2.values():
 					name = tmp2.getchildren()[0].getchildren()[1].getchildren()[0].getchildren()[0].text.strip()
+					print name
 				if 'guild-member-td-c' in tmp2.values():
 					if i == 1:
 						prestige = tmp2.getchildren()[0].text.strip()
@@ -82,7 +104,7 @@ def getMemberData(member, epoch):
 						colaboration = tmp2.getchildren()[0].text.strip()
 						colaboration = convertPantheonData(colaboration)
 						i+= 1
-			sql = "INSERT INTO " + table + " (epoch, member_id, name, prestige, credits, resources, colaboration) VALUES ( %d, '%s', '%s', %d, %d, %d, %d )" % ( epoch, profile, name, prestige, credits, construction, colaboration)
+			sql = "INSERT INTO " + table + " (epoch, member_id, name, prestige, credits, resources, colaboration, memberType) VALUES ( %d, '%s', '%s', %d, %d, %d, %d, '%s' )" % ( epoch, profile, name, prestige, credits, construction, colaboration, memberType )
 			cursor.execute(sql)
 
 def convertPantheonData(value):
@@ -94,7 +116,6 @@ def convertPantheonData(value):
 		value = value.split("M")[0]
 		value = value.replace(".", "")
 		value = value + "00"
-	print int(value)
 	return int(value)
 if __name__ == "__main__":
 	LogInToMyPortal(username = LoginCredentials['username'], password = LoginCredentials['password'], pantheonID = LoginCredentials['pantheonID'])

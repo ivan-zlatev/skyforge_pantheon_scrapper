@@ -12,5 +12,5 @@ cursor.execute(sql)
 db.select_db(LoginCredentials['mysql_db'])
 cursor = db.cursor()
 table = LoginCredentials['mysql_table']
-sql = "CREATE TABLE " + table + "( epoch int, member_id varchar(255), name varchar(255), prestige int, credits int, resources int, colaboration int)"
+sql = "CREATE TABLE " + table + "( epoch int, member_id varchar(255), name varchar(255), prestige int, credits int, resources int, colaboration int, memberType varchar(255))"
 cursor.execute(sql)
