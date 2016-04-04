@@ -98,16 +98,12 @@ def getMemberData(member, epoch):
 	table = LoginCredentials['mysql_table']
 	for tmp in member.getchildren():
 		if 'corn' in tmp.values():
-			profile = tmp.getchildren()[1].values()
-			for tmp2 in profile:
-				if "zoneHelper" in tmp2.split("."):
-					profile = tmp2.split(":selectmember/")[1].split("?")[0]
 			i = 1
-			#print profile
 			for tmp2 in tmp.getchildren()[0]:
 				if 'guild-member-td-b' in tmp2.values():
 					name = tmp2.getchildren()[0].getchildren()[1].getchildren()[0].getchildren()[0].text.strip()
-					print name
+					profile = tmp2.getchildren()[0].getchildren()[1].getchildren()[0].getchildren()[0].values()[0].split("wall/")[1]
+					print name + "   " + profile
 				if 'guild-member-td-c' in tmp2.values():
 					if i == 1:
 						prestige = tmp2.getchildren()[0].text.strip()
