@@ -31,7 +31,7 @@ def LogInToMyPortal(username, password, pantheonID):
 	p.submit()
 #get first members page
 	browser.get("https://eu.portal.sf.my.com/guild/members/" + pantheonID)
-	time.sleep(1)
+	time.sleep(3)
 	epoch = int(time.time())
 	sql = "INSERT INTO " + log + " ( epoch, status ) VALUES ( %d, 0 )" % ( epoch )
 	cursor.execute(sql)
@@ -43,13 +43,13 @@ def LogInToMyPortal(username, password, pantheonID):
 		try:
 			browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 			browser.find_element_by_class_name("svg-arrow-right").click()
-			time.sleep(1)
+			time.sleep(3)
 			getPantheonData(browser.page_source, epoch)
 		except:
 			break
 #get first academy page
 	browser.get("https://eu.portal.sf.my.com/guild/academy/" + pantheonID)
-	time.sleep(1)
+	time.sleep(3)
 	memberType = "academy"
 	getPantheonData(browser.page_source, epoch)
 #get next academy page loop
@@ -57,7 +57,7 @@ def LogInToMyPortal(username, password, pantheonID):
 		try:
 			browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 			browser.find_element_by_class_name("svg-arrow-right").click()
-			time.sleep(1)
+			time.sleep(3)
 			getPantheonData(browser.page_source, epoch)
 		except:
 			browser.close()
