@@ -96,6 +96,7 @@ def getMemberData(member, epoch):
 					db=LoginCredentials['mysql_db'])
 	cursor = db.cursor()
 	table = LoginCredentials['mysql_table']
+	age_table = LoginCredentials['mysql_member_age']
 	for tmp in member.getchildren():
 		if 'corn' in tmp.values():
 			i = 1
@@ -103,7 +104,7 @@ def getMemberData(member, epoch):
 				if 'guild-member-td-b' in tmp2.values():
 					name = tmp2.getchildren()[0].getchildren()[1].getchildren()[0].getchildren()[0].text.strip()
 					profile = tmp2.getchildren()[0].getchildren()[1].getchildren()[0].getchildren()[0].values()[0].split("wall/")[1]
-					print name + "   " + profile
+					print name
 				if 'guild-member-td-c' in tmp2.values():
 					if i == 1:
 						prestige = tmp2.getchildren()[0].text.strip()
@@ -123,6 +124,12 @@ def getMemberData(member, epoch):
 						i+= 1
 			sql = "INSERT INTO " + table + " (epoch, member_id, name, prestige, credits, resources, colaboration, memberType) VALUES ( %d, '%s', '%s', %d, %d, %d, %d, '%s' )" % ( epoch, profile, name, prestige, credits, construction, colaboration, memberType )
 			cursor.execute(sql)
+			sql = "SELECT COUNT(*) FROM " + age_table + " WHERE member_id = '%s'" %( profile )
+			cursor.execute(sql)
+			memberCount = cursor.fetchone()
+			if memberCount[0] < 1:
+				sql = "INSERT INTO " + age_table + " ( member_id, age ) VALUES ( '%s', %d )" % ( profile, epoch )
+				cursor.execute(sql)
 
 def convertPantheonData(value): # convert K and M from aelinet to zeros so that values are integer/long
 	if value[-1:] == "K":

@@ -35,3 +35,6 @@ cursor.execute(sql) # Create pantheon table
 table = LoginCredentials['mysql_log']
 sql = "CREATE TABLE " + table + "( epoch int, status tinyint )"
 cursor.execute(sql) # Create run logs table
+table = LoginCredentials['mysql_member_age']
+sql = "CREATE TABLE " + table + "(member_id varchar(255), age int)"
+cursor.execute(sql) # Create member age table

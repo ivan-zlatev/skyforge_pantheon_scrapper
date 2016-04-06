@@ -23,3 +23,8 @@ cursor.execute("SELECT * FROM " + LoginCredentials['mysql_log'])
 data = cursor.fetchall()
 for tmp in data:
 	print tmp
+print ""
+cursor.execute("SELECT * FROM " + LoginCredentials['mysql_member_age'])
+data = cursor.fetchall()
+for tmp in data:
+	print tmp
