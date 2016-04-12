@@ -11,8 +11,11 @@ import time
 from selenium import webdriver
 import MySQLdb
 from private_data import LoginCredentials # import credentials
+from pyvirtualdisplay import Display
 
 def LogInToMyPortal(username, password, pantheonID):
+	display = Display(visible=0, size=(1920, 1080))
+	display.start()
 	global status
 	status = False
 	db = MySQLdb.connect(host=LoginCredentials['mysql_host'],
@@ -35,6 +38,7 @@ def LogInToMyPortal(username, password, pantheonID):
 	epoch = int(time.time())
 	sql = "INSERT INTO " + log + " ( epoch, status ) VALUES ( %d, 0 )" % ( epoch )
 	cursor.execute(sql)
+	db.commit()
 	global memberType
 	memberType = "pantheon"
 	getPantheonData(browser.page_source, epoch)
@@ -65,6 +69,8 @@ def LogInToMyPortal(username, password, pantheonID):
 	if status == True:
 		sql = "UPDATE " + log + " SET status=1 WHERE epoch=%d" % (epoch)
 		cursor.execute(sql)
+		db.commit()
+	display.stop()
 
 def getPantheonData(page, epoch):
 	tree = html.fromstring(page)
@@ -123,13 +129,16 @@ def getMemberData(member, epoch):
 						colaboration = convertPantheonData(colaboration)
 						i+= 1
 			sql = "INSERT INTO " + table + " (epoch, member_id, name, prestige, credits, resources, colaboration, memberType) VALUES ( %d, '%s', '%s', %d, %d, %d, %d, '%s' )" % ( epoch, profile, name, prestige, credits, construction, colaboration, memberType )
+			print sql
 			cursor.execute(sql)
+			db.commit()
 			sql = "SELECT COUNT(*) FROM " + age_table + " WHERE member_id = '%s'" %( profile )
 			cursor.execute(sql)
 			memberCount = cursor.fetchone()
 			if memberCount[0] < 1:
 				sql = "INSERT INTO " + age_table + " ( member_id, age ) VALUES ( '%s', %d )" % ( profile, epoch )
 				cursor.execute(sql)
+				db.commit()
 
 def convertPantheonData(value): # convert K and M from aelinet to zeros so that values are integer/long
 	if value[-1:] == "K":

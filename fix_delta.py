@@ -29,9 +29,9 @@ def FixMembersAgeSoThatDeltaIsOne(table, requirement):
 	for age in age_arr:
 		for data in data_arr:
 			if age[0] in data:
-				new_age = curr_time - ((data[table]/requirement)*604800 + 604800 )
+				new_age = curr_time - ((data[table]/requirement)*604800  )
 				sql = "UPDATE pantheon_age SET age = '" + str(new_age) + "' WHERE member_id = '" + str(data[1]) + "'"
 				cursor.execute(sql)
-				
+				db.commit()				
 if __name__ == "__main__":
 	FixMembersAgeSoThatDeltaIsOne( table = 4, requirement = 20000 )

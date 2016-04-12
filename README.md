@@ -5,6 +5,7 @@ Python webpage scrapper for scrapping information from Skyforge Aelinet Pantheon
 The scrapper uses selenium and writes the extracted information to a MySQL Database.
 
 Required python modules:
+	pyvirtualdisplay,
 	lxml,
 	time,
 	selenium,

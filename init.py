@@ -21,6 +21,7 @@ cursor = db.cursor()
 table = LoginCredentials['mysql_table']
 sql = "CREATE TABLE " + table + "( epoch int, member_id varchar(255), name varchar(255), prestige int, credits int, resources int, colaboration int, memberType varchar(255))"
 cursor.execute(sql) # Create pantheon table
+db.commit()
 #  The columns are as follows:
 #   
 #   epoch           epoch time when the data was collected
@@ -32,9 +33,7 @@ cursor.execute(sql) # Create pantheon table
 #   colaboration    current colaboration points
 #   memberType      current member type [academy|pantheon]
 #   
-table = LoginCredentials['mysql_log']
-sql = "CREATE TABLE " + table + "( epoch int, status tinyint )"
-cursor.execute(sql) # Create run logs table
-table = LoginCredentials['mysql_member_age']
-sql = "CREATE TABLE " + table + "(member_id varchar(255), age int)"
-cursor.execute(sql) # Create member age table
+cursor.execute( "CREATE TABLE " + LoginCredentials['mysql_log'] + " ( epoch int, status tinyint )") # Create run logs table
+db.commit()
+cursor.execute("CREATE TABLE " + LoginCredentials['mysql_member_age'] + " (member_id varchar(255), age int)") # Create member age table
+db.commit()
