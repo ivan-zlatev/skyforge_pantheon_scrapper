@@ -33,7 +33,9 @@ db.commit()
 #   colaboration    current colaboration points
 #   memberType      current member type [academy|pantheon]
 #   
-cursor.execute( "CREATE TABLE " + LoginCredentials['mysql_log'] + " ( epoch int, status tinyint )") # Create run logs table
+cursor.execute("CREATE TABLE " + LoginCredentials['mysql_log'] + " ( epoch int, status tinyint )") # Create run logs table
 db.commit()
 cursor.execute("CREATE TABLE " + LoginCredentials['mysql_member_age'] + " (member_id varchar(255), age int)") # Create member age table
+db.commit()
+cursor.execute("CREATE TABLE " + LoginCredentials['mysql_register'] + " (member_id varchar(255), username varchar(255), password varchar(255))") # Create Login table
 db.commit()

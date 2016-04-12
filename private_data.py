@@ -15,7 +15,9 @@ LoginCredentials = {
 	'mysql_password' : "<mysql password>",
 	'mysql_db' : "<mysql database>",
 	'mysql_table' : "<mysql table>",
-	'mysql_log' : "<mysql table>-log",
-	'mysql_member_age' : "<mysql table>-age"
+	'mysql_log' : "<mysql table>_log",
+	'mysql_member_age' : "<mysql table>_age",
+	'mysql_register' : "<mysql table>_register"
+
 }
 
