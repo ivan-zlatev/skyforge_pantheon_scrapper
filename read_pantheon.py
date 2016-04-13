@@ -17,7 +17,11 @@ def LogInToMyPortal(username, password, pantheonID):
 	display = Display(visible=0, size=(1920, 1080))
 	display.start()
 	global status
-	status = False
+        status = False
+	global members_list_exist_errcheck
+	global members_list_exist_errcheck_bool
+	members_list_exist_errcheck_bool = True
+	members_list_exist_errcheck = []
 	db = MySQLdb.connect(host=LoginCredentials['mysql_host'],
 						user=LoginCredentials['mysql_username'],
 						passwd=LoginCredentials['mysql_password'],
@@ -66,10 +70,11 @@ def LogInToMyPortal(username, password, pantheonID):
 		except:
 			browser.close()
 			break
-	if status == True:
+	if ((status == True) and (members_list_exist_errcheck_bool == True)):
 		sql = "UPDATE " + log + " SET status=1 WHERE epoch=%d" % (epoch)
 		cursor.execute(sql)
 		db.commit()
+	print "Epoch = " + str(epoch) + ", status = " + str(status) + ", members_list_exist_errcheck_bool = " + str(members_list_exist_errcheck_bool) + ", members_list_exist_errcheck = " + str(members_list_exist_errcheck) + "\n\n\n"
 	display.stop()
 
 def getPantheonData(page, epoch):
@@ -110,7 +115,6 @@ def getMemberData(member, epoch):
 				if 'guild-member-td-b' in tmp2.values():
 					name = tmp2.getchildren()[0].getchildren()[1].getchildren()[0].getchildren()[0].text.strip()
 					profile = tmp2.getchildren()[0].getchildren()[1].getchildren()[0].getchildren()[0].values()[0].split("wall/")[1]
-					print name
 				if 'guild-member-td-c' in tmp2.values():
 					if i == 1:
 						prestige = tmp2.getchildren()[0].text.strip()
@@ -129,7 +133,6 @@ def getMemberData(member, epoch):
 						colaboration = convertPantheonData(colaboration)
 						i+= 1
 			sql = "INSERT INTO " + table + " (epoch, member_id, name, prestige, credits, resources, colaboration, memberType) VALUES ( %d, '%s', '%s', %d, %d, %d, %d, '%s' )" % ( epoch, profile, name, prestige, credits, construction, colaboration, memberType )
-			print sql
 			cursor.execute(sql)
 			db.commit()
 			sql = "SELECT COUNT(*) FROM " + age_table + " WHERE member_id = '%s'" %( profile )
@@ -139,6 +142,9 @@ def getMemberData(member, epoch):
 				sql = "INSERT INTO " + age_table + " ( member_id, age ) VALUES ( '%s', %d )" % ( profile, epoch )
 				cursor.execute(sql)
 				db.commit()
+			if profile in members_list_exist_errcheck:
+				members_list_exist_errcheck_bool = False
+			members_list_exist_errcheck.append(profile)
 
 def convertPantheonData(value): # convert K and M from aelinet to zeros so that values are integer/long
 	if value[-1:] == "K":
