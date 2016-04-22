@@ -154,7 +154,7 @@ def convertPantheonData(value): # convert K and M from aelinet to zeros so that 
 	elif value[-1:] == "M":
 		value = value.split("M")[0]
 		value = value.replace(".", "")
-		value = value + "00"
+		value = value + "00000"
 	return int(value)
 if __name__ == "__main__":
 	LogInToMyPortal(username = LoginCredentials['username'], password = LoginCredentials['password'], pantheonID = LoginCredentials['pantheonID'])

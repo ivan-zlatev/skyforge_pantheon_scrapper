@@ -39,3 +39,5 @@ cursor.execute("CREATE TABLE " + LoginCredentials['mysql_member_age'] + " (membe
 db.commit()
 cursor.execute("CREATE TABLE " + LoginCredentials['mysql_register'] + " (member_id varchar(255), username varchar(255), password varchar(255))") # Create Login table
 db.commit()
+cursor.execute("CREATE TABLE " + LoginCredentials['mysql_lfg'] + " (epoch int, member_id varchar(255), dungeon varchar(255), tanks_required int, tanks varchar(255), supp_required int, supp varchar(255), dps_required int, dps varchar(255) )")
+

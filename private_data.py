@@ -14,10 +14,10 @@ LoginCredentials = {
 	'mysql_username' : "<mysql user>",
 	'mysql_password' : "<mysql password>",
 	'mysql_db' : "<mysql database>",
-	'mysql_table' : "<mysql table>",
-	'mysql_log' : "<mysql table>_log",
-	'mysql_member_age' : "<mysql table>_age",
-	'mysql_register' : "<mysql table>_register"
-
+	'mysql_table' : "pantheon",
+	'mysql_log' : "pantheon_log",
+	'mysql_member_age' : "pantheon_age",
+	'mysql_register' : "pantheon_register",
+	'mysql_lfg' : "pantheon_lfg"
 }
 
